@@ -7,6 +7,9 @@ export default function Home() {
   const [input, setInput] = useState("");
   // 切换模型
   const [model, setModel] = useState("deepseek-v3");
+   const handleChangeModel = () => {
+    setModel(model === 'deepseek-r1' ? 'deepseek-v3' : 'deepseek-r1');
+  }
   return  (
     <div className="flex flex-col items-center h-screen">
       <div className="h-1/5"></div>
@@ -22,7 +25,9 @@ export default function Home() {
           ></textarea>
           <div className="flex flex-row justify-between items-center mb-2 w-full h-12">
             <div>
-              <div className={`flex flex-row items-center justify-center rounded-lg border-[1px] px-2 py-1 ml-2 cursor-pointer ${model === 'deepseek-r1'?'border-blue-300 bg-blue-200':'border-gray-300'}`}>
+              <div className={`flex flex-row items-center justify-center rounded-lg border-[1px] px-2 py-1 ml-2 cursor-pointer ${model === 'deepseek-r1'?'border-blue-300 bg-blue-200':'border-gray-300'}`}
+              onClick={handleChangeModel}
+              >
                 <p className="text-sm">深度思考(R1)</p>
               </div>
             </div>
