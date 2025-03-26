@@ -13,9 +13,13 @@ export default function Page() {
     // 有消息自动到最低部
     useEffect(() => {
       if (endRef.current) {
-        endRef?.current?.scrollIntoView({ behavior: 'smooth' });
+        endRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end', // 确保滚动到最底部
+          inline: 'nearest'
+        });
       }
-    }, [messages]);
+    }, [messages]); // 当messages变化时触发
 
     const [model, setModel] = useState("deepseek-v3");
     const handleChangeModel = () => {
@@ -38,8 +42,8 @@ export default function Page() {
               </div>
             ))}  
           </div>
+          <div className='h-4' ref={endRef}></div>
         </div>
-        <div className='h-4' ref={endRef}></div>
         <div className="flex flex-col items-center justify-center mt-4 shadow-lg border-[1px] border-gray-300 h-32 rounded-lg  w-2/3">
             <textarea className="p-3 w-full rounded-lg h-30 focus:outline-none"
               value={input}
