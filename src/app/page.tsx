@@ -2,6 +2,10 @@
 import Image from "next/image";
 import { useState } from "react";
 import EastIcon from '@mui/icons-material/East';
+import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from 'next/navigation'; // Update this import
+import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -10,6 +14,34 @@ export default function Home() {
    const handleChangeModel = () => {
     setModel(model === 'deepseek-r1' ? 'deepseek-v3' : 'deepseek-r1');
   }
+  const queryClient = useQueryClient();
+  const router = useRouter()
+
+  const {user} = useUser()
+  // Mutations
+  const {mutate: createChat} = useMutation({
+    mutationFn: async()=>{
+      return axios.post('/api/create-chat',{
+        title: input,
+        model: model,
+      })
+    },
+    onSuccess: (res) => {
+      // Invalidate and refetch
+      router.push(`/chat/${res.data.id}`)
+      queryClient.invalidateQueries({ queryKey: ['chats'] })
+    },
+  })
+  const handleSubmit = () => {
+    if(input.trim() === "")  return;
+    if(!user){
+      router.push('/sign-in')
+      return;
+    } 
+    createChat();
+    // setInput("");
+  }
+
   return  (
     <div className="flex flex-col items-center h-screen">
       <div className="h-1/5"></div>
@@ -31,7 +63,7 @@ export default function Home() {
                 <p className="text-sm">深度思考(R1)</p>
               </div>
             </div>
-            <div className="flex justify-center items-center p-1 mr-4 rounded-full border-2 border-black">
+            <div className="flex justify-center items-center p-1 mr-4 rounded-full border-2 border-black" onClick={handleSubmit}>
               <EastIcon />
             </div>
           </div>
